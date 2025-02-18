@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1 Mês de Namoro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none; /* Impede a seleção de texto */
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #000; /* fundo preto */
+            color: #333;
+            text-align: center;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .background-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            display: none; /* escondido até clicar */
+        }
+
+        .floating-text {
+            position: absolute;
+            top: 10%; /* ajustado para ficar mais acima */
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff6b81;
+            animation: float 3s infinite alternate ease-in-out;
+            display: none; /* escondido até clicar */
+        }
+
+        @keyframes float {
+            from {
+                transform: translateX(-50%) translateY(0);
+            }
+            to {
+                transform: translateX(-50%) translateY(-20px);
+            }
+        }
+
+        .gallery {
+            display: none; /* escondido até clicar */
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            margin-bottom: 150px; /* Mais espaço abaixo das fotos */
+        }
+
+        .photo-container {
+            width: 200px;
+            height: 200px;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transform: scale(0);
+            transition: transform 0.5s ease;
+            pointer-events: none; /* Impede cliques nas fotos */
+        }
+
+        .photo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-text {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-size: 14px;
+            padding: 5px;
+            text-align: center;
+        }
+
+        .music-frame {
+            display: none; /* escondido completamente */
+        }
+
+        #surprise-btn {
+            padding: 15px 30px;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            background-color: #ff6b81;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        #surprise-btn:hover {
+            background-color: #ff4757;
+        }
+
+        #surprise-text {
+            display: none;
+            font-size: 20px;
+            margin-top: 20px;
+            color: #ff4757;
+            font-weight: bold;
+            position: absolute;
+            top: 20%; /* ajustado para ficar abaixo do "Feliz 1 Mês" */
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        #love-text {
+            display: none;
+            font-size: 26px;
+            font-weight: bold;
+            color: #ff4757;
+            margin-top: 40px;
+            opacity: 0;
+            transition: opacity 2s ease;
+            position: absolute;
+            top: 80%; /* ajustado para ficar mais abaixo */
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        #custom-text {
+    display: none;
+    font-size: 25px;
+    color: black;
+    margin-top: 10px;
+    position: absolute;
+    top: 110%; /* posicionado bem abaixo das fotos */
+    left: 0;
+    right: 0;
+    width: 100%;
+    transform: translateX(0);
+    white-space: normal; /* Permite quebras de linha */
+    word-wrap: break-word; /* Quebra as palavras para caber na linha */
+    text-align: center; /* Alinha o texto ao centro */
+}
+    </style>
+</head>
+<body>
+
+    <canvas class="background-effect"></canvas>
+
+    <h1 class="floating-text"> </h1>
+
+    <button id="surprise-btn">Clique para uma surpresa</button>
+    <p id="surprise-text"> <
+
+    <div class="gallery">
+        <div class="photo-container">
+            <img src="https://i.ibb.co/qMQNFGps/IMG-20250213-WA0073.jpg" alt="Foto 1">
+            <div class="photo-text">Nosso momento especial</div>
+        </div>
+        <div class="photo-container">
+            <img src="https://i.ibb.co/KZzsDGg/IMG-20250214-WA0034.jpg" alt="Foto 2">
+            <div class="photo-text">Sempre juntos</div>
+        </div>
+        <div class="photo-container">
+            <img src="https://i.ibb.co/mFMHyNHf/IMG-20250213-WA0074.jpg" alt="Foto 3">
+            <div class="photo-text">Eu Te amo!</div>
+        </div>
+        <div class="photo-container">
+            <img src="https://i.ibb.co/xPRFWrF/IMG-20250213-WA0071.jpg" alt="Foto 4">
+            <div class="photo-text">Seu sorriso lindo</div>
+        </div>
+    </div>
+
+    <iframe class="music-frame" id="music-frame" src="https://vocaroo.com/embed/19iqIgBr4ZlL?autoplay=0" allow="autoplay"></iframe>
+
+    <p id="custom-text"></p> <!-- Espaço para o texto personalizado -->
+
+    <script>
+        // Variável para controlar o efeito das pétalas
+        let particles = [];
+        let animationFrameId;
+
+        // Função para iniciar o efeito das pétalas
+        function initParticles() {
+            const canvas = document.querySelector('.background-effect');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 5 + 2;
+                    this.speedY = Math.random() * 3 + 1;
+                    this.opacity = Math.random() * 0.5 + 0.5;
+                }
+
+                update() {
+                    this.y += this.speedY;
+                    if (this.y > canvas.height) {
+                        this.y = 0;
+                        this.x = Math.random() * canvas.width;
+                    }
+                }
+
+                draw() {
+                    ctx.globalAlpha = this.opacity;
+                    ctx.fillStyle = '#ff6b81';
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.globalAlpha = 1;
+                }
+            }
+
+            for (let i = 0; i < 50; i++) {
+                particles.push(new Particle());
+            }
+
+            function animateParticles() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(particle => {
+                    particle.update();
+                    particle.draw();
+                });
+                animationFrameId = requestAnimationFrame(animateParticles);
+            }
+
+            animateParticles();
+        }
+
+        // Botão surpresa
+        document.getElementById("surprise-btn").addEventListener("click", function() {
+            document.body.style.backgroundColor = "#d8b4f8"; // muda o fundo para lilás
+            document.querySelector(".background-effect").style.display = "block"; // exibe o efeito das pétalas
+            document.querySelector(".floating-text").style.display = "block"; // exibe "Feliz 1 Mês"
+            document.getElementById("music-frame").src = "https://vocaroo.com/embed/19iqIgBr4ZlL?autoplay=1"; // toca a música
+            document.getElementById("surprise-text").style.display = "block"; // exibe a mensagem surpresa
+            document.querySelector(".gallery").style.display = "flex"; // exibe as imagens
+
+            let photos = document.querySelectorAll(".photo-container");
+            photos.forEach((photo, index) => {
+                setTimeout(() => {
+                    photo.style.transform = "scale(1)";
+                }, index * 300);
+            });
+
+            setTimeout(() => {
+                let loveText = document.getElementById("love-text");
+                loveText.style.display = "block";
+                setTimeout(() => {
+                    loveText.style.opacity = "1"; // fade-in do "Eu te amo"
+                }, 200);
+            }, 2500);
+
+            // Exibe o texto personalizado
+            let customText = document.getElementById("custom-text");
+            customText.style.display = "block";
+            customText.textContent = `amor, hoje a gente completa um mês juntos, e eu só quero te lembrar o quanto você significa pra mim. desde o primeiro dia, antes mesmo de te beijar, antes de tocar sua pele, antes de sentir seu abraço, eu já sabia que você era a minha pessoa. me apaixonei naquele dia em que começamos a conversar, porque senti que você era tudo o que eu sempre quis. conhecer você foi a melhor coisa que já me aconteceu. você mudou minha vida de uma maneira que nem sei explicar, você trouxe luz, paz e um amor que eu nunca imaginei ser possível, minha princesa, eu te amo muito. amo seu abraço, amo seu jeito, amo tudo em você. você me cura, me faz bem, me acalma de um jeito que ninguém nunca conseguiu. quando estou com você, o tempo passa rápido demais, mas cada segundo ao seu lado vale a pena. seu abraço é a melhor coisa do universo, e ouvir você dizer que me ama, olhando nos meus olhos, é a coisa mais incrível que já senti. e quando você sorri, meu mundo para. sua felicidade é tudo o que eu mais quero, eu era burro por não te tratar assim antes, mas isso nunca mais vai mudar, tá bom? você é a pessoa mais especial do mundo pra mim. eu quero te ter na minha vida pra sempre, nessa e em todas as outras. eu quero me casar com você, quero cuidar de você, quero te fazer feliz todos os dias. cada sonho meu agora tem você, cada futuro meu só faz sentido com você ao meu lado. então, por favor, bebe água e se alimenta direitinho, porque a gente ainda tem uma vida inteira pela frente. eu vou cuidar de você, te fazer sorrir, te amar todos os dias com toda a força que eu tenho, você é minha base, minha força, e o maior presente que a vida me deu. aconteça o que acontecer, meus olhos sempre estarão ligados a você, minha mente sempre estará pensando em você, meu coração sempre baterá por você, minhas palavras de amor sempre serão sobre você. você me faz ser uma pessoa melhor, e eu te amo por isso. você é o meu tudo, independente do que aconteça, prometo nunca desistir de você, porque vou fazer de tudo pra te mostrar que não é dificil amar você, e te amar é a melhor coisa da minha vida! e por mais que a gente enfrente dificuldades, eu sei que sempre teremos um ao outro. você é meu porto seguro, meu amor eterno, eu amo tudo em você, sua personalidade, seu cabelo, seus olhinhos, amo cada detalhe e não mudaria nada em você, porque te amo por inteira, o jeito que você ri, a maneira como se importa comigo, tudo em você é perfeito. você me fascina a cada dia, me faz querer ser uma pessoa melhor e me faz feliz de um jeito que nunca imaginei ser possível. você tem algo que ninguém mais tem: o poder de me fazer sentir único, amado, completo, te admiro profundamente por tudo o que você é e pelo que faz. cada gesto seu, cada palavra que você diz, só me faz te amar ainda mais. você é incrível, e fico tão feliz por ter alguém como você ao meu lado. seu jeito de ser, sua bondade, seu coração enorme, são qualidades raras que me fazem me apaixonar cada vez mais. você é a razão de eu querer ser alguém melhor a cada dia, eu te amo não só pelos momentos bons, mas também pelas dificuldades que enfrentamos juntos. você me mostrou o verdadeiro significado do amor, e eu sou grato por isso todos os dias. você me ensina todos os dias a ser mais paciente, mais compreensivo e mais grato. não importa onde a vida nos leve, eu quero estar ao seu lado, em todos os momentos, obrigado por ser essa pessoa incrível na minha vida. eu só posso confiar em você, e eu prometo te provar todos os dias o quanto você merece ser amada. eu vou te bombardear de amor, porque você foi a melhor coisa que aconteceu comigo desde que eu nasci. você é o meu mundo, meu amor, minha vida. nunca se esqueça disso. eu prometo que estarei ao seu lado, te amando e cuidando de você todos os dias, eu te amo mais que tudo. você é a pessoa que eu escolhi, e eu não me canso de escolher você todos os dias. meu amor por você é infinito, e nada vai mudar isso. porque você é a melhor parte de mim, e eu sou a melhor versão de mim quando estou com você. eu te amo, minha princesa, mais do que palavras podem expressar. eu não quero que isso acabe nunca, eu te amo.`;
+
+            this.style.display = "none"; // esconde o botão
+
+            // Inicia o efeito das pétalas
+            initParticles();
+        });
+
+        // Redimensionar canvas ao ajustar a tela
+        window.addEventListener('resize', () => {
+            const canvas = document.querySelector('.background-effect');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+
+</body>
+</html>
