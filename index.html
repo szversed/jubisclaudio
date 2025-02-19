@@ -5,17 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>1 Mês de Namoro</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            user-select: none; /* Impede a seleção de texto */
+            user-select: none;
+        }
+
+        :root {
+            --primary-color: #ff6b81;
+            --secondary-color: #ff4757;
+            --accent-color: #d8b4f8;
+            --text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #000; /* fundo preto */
+            background-color: #000;
             color: #333;
             text-align: center;
             overflow-x: hidden;
@@ -23,6 +31,37 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            position: relative;
+            perspective: 1000px;
+        }
+
+        .sparkle {
+            position: absolute;
+            pointer-events: none;
+            animation: sparkleAnimation 2s linear infinite;
+            filter: drop-shadow(0 0 5px var(--primary-color));
+        }
+
+        @keyframes sparkleAnimation {
+            0% { transform: scale(1) rotate(0deg); opacity: 1; filter: hue-rotate(0deg); }
+            50% { transform: scale(1.5) rotate(180deg); opacity: 0.5; filter: hue-rotate(180deg); }
+            100% { transform: scale(1) rotate(360deg); opacity: 1; filter: hue-rotate(360deg); }
+        }
+
+        .heart {
+            position: absolute;
+            pointer-events: none;
+            color: var(--primary-color);
+            animation: heartBeat 1.5s ease infinite;
+            filter: drop-shadow(0 0 3px var(--secondary-color));
+        }
+
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            14% { transform: scale(1.3) rotate(10deg); }
+            28% { transform: scale(1) rotate(-10deg); }
+            42% { transform: scale(1.3) rotate(10deg); }
+            70% { transform: scale(1) rotate(0deg); }
         }
 
         .background-effect {
@@ -33,168 +72,400 @@
             height: 100%;
             pointer-events: none;
             z-index: -1;
-            display: none; /* escondido até clicar */
+            display: none;
+            filter: blur(1px);
         }
 
         .floating-text {
             position: absolute;
-            top: 10%; /* ajustado para ficar mais acima */
+            top: 10%;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 24px;
+            font-size: 48px;
             font-weight: bold;
-            color: #ff6b81;
-            animation: float 3s infinite alternate ease-in-out;
-            display: none; /* escondido até clicar */
+            color: var(--primary-color);
+            text-shadow: var(--text-shadow);
+            animation: float 3s infinite alternate ease-in-out, textGlow 2s infinite alternate;
+            display: none;
+            letter-spacing: 2px;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        @keyframes textGlow {
+            from { 
+                text-shadow: 0 0 10px var(--primary-color),
+                            0 0 20px var(--primary-color),
+                            0 0 30px var(--primary-color);
+            }
+            to { 
+                text-shadow: 0 0 20px var(--primary-color),
+                            0 0 30px var(--primary-color),
+                            0 0 40px var(--primary-color),
+                            0 0 50px var(--primary-color);
+            }
         }
 
         @keyframes float {
-            from {
-                transform: translateX(-50%) translateY(0);
-            }
-            to {
-                transform: translateX(-50%) translateY(-20px);
-            }
+            from { transform: translateX(-50%) translateY(0) rotate(-2deg); }
+            to { transform: translateX(-50%) translateY(-20px) rotate(2deg); }
         }
 
         .gallery {
-            display: none; /* escondido até clicar */
+            display: none;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 15px;
-            margin-top: 30px;
-            margin-bottom: 150px; /* Mais espaço abaixo das fotos */
+            gap: 30px;
+            margin-top: 50px;
+            margin-bottom: 150px;
+            perspective: 1000px;
+            transform-style: preserve-3d;
         }
 
         .photo-container {
-            width: 200px;
-            height: 200px;
-            border-radius: 15px;
+            width: 220px;
+            height: 220px;
+            border-radius: 20px;
             overflow: hidden;
             position: relative;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transform: scale(0);
-            transition: transform 0.5s ease;
-            pointer-events: none; /* Impede cliques nas fotos */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transform: scale(0) rotateY(180deg);
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+            cursor: pointer;
+        }
+
+        .photo-container:hover {
+            transform: scale(1.1) rotateY(0deg) translateZ(30px);
+            box-shadow: 0 8px 25px rgba(255, 107, 129, 0.6),
+                        0 0 50px rgba(255, 107, 129, 0.3);
+            z-index: 1;
         }
 
         .photo-container img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: transform 0.5s ease;
+            filter: brightness(0.9) contrast(1.1);
+        }
+
+        .photo-container:hover img {
+            transform: scale(1.1);
+            filter: brightness(1) contrast(1.2);
         }
 
         .photo-text {
             position: absolute;
             bottom: 0;
             width: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.7);
             color: white;
-            font-size: 14px;
-            padding: 5px;
+            font-size: 16px;
+            padding: 12px;
             text-align: center;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            letter-spacing: 1px;
+        }
+
+        .photo-container:hover .photo-text {
+            transform: translateY(0);
+            background: linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.7));
         }
 
         .music-frame {
-            display: none; /* escondido completamente */
+            display: none;
         }
 
         #surprise-btn {
-            padding: 15px 30px;
-            font-size: 18px;
+            padding: 20px 40px;
+            font-size: 24px;
             border: none;
-            border-radius: 8px;
-            background-color: #ff6b81;
+            border-radius: 50px;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
             color: white;
             cursor: pointer;
-            transition: 0.3s;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 129, 0.4);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 1px;
+            text-shadow: var(--text-shadow);
+            z-index: 1;
         }
 
         #surprise-btn:hover {
-            background-color: #ff4757;
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(255, 107, 129, 0.6);
+            letter-spacing: 2px;
+        }
+
+        #surprise-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                120deg,
+                transparent,
+                rgba(255, 255, 255, 0.3),
+                transparent
+            );
+            transition: 0.5s;
+        }
+
+        #surprise-btn:hover::before {
+            left: 100%;
+        }
+
+        #surprise-btn::after {
+            content: '';
+            position: absolute;
+            inset: 3px;
+            background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+            filter: blur(15px);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        #surprise-btn:hover::after {
+            opacity: 1;
+        }
+
+        @keyframes buttonPulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 107, 129, 0.6); }
+            70% { box-shadow: 0 0 0 20px rgba(255, 107, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 107, 129, 0); }
+        }
+
+        .surprise-btn-wrapper {
+            animation: buttonPulse 2s infinite;
         }
 
         #surprise-text {
             display: none;
-            font-size: 20px;
+            font-size: 32px;
             margin-top: 20px;
-            color: #ff4757;
+            color: var(--secondary-color);
             font-weight: bold;
             position: absolute;
-            top: 20%; /* ajustado para ficar abaixo do "Feliz 1 Mês" */
+            top: 20%;
             left: 50%;
             transform: translateX(-50%);
+            text-shadow: var(--text-shadow);
+            opacity: 0;
+            transition: all 1s ease;
         }
 
         #love-text {
             display: none;
-            font-size: 26px;
+            font-size: 36px;
             font-weight: bold;
-            color: #ff4757;
+            color: var(--secondary-color);
             margin-top: 40px;
             opacity: 0;
-            transition: opacity 2s ease;
+            transition: all 2s ease;
             position: absolute;
-            top: 80%; /* ajustado para ficar mais abaixo */
+            top: 80%;
             left: 50%;
             transform: translateX(-50%);
+            text-shadow: var(--text-shadow);
+            letter-spacing: 2px;
         }
 
         #custom-text {
-    display: none;
-    font-size: 25px;
-    color: black;
-    margin-top: 10px;
-    position: absolute;
-    top: 110%; /* posicionado bem abaixo das fotos */
-    left: 0;
-    right: 0;
-    width: 100%;
-    transform: translateX(0);
-    white-space: normal; /* Permite quebras de linha */
-    word-wrap: break-word; /* Quebra as palavras para caber na linha */
-    text-align: center; /* Alinha o texto ao centro */
-}
+            display: none;
+            font-size: 28px;
+            color: #333;
+            margin-top: 10px;
+            position: absolute;
+            top: 110%;
+            left: 0;
+            right: 0;
+            width: 100%;
+            transform: translateX(0);
+            white-space: normal;
+            word-wrap: break-word;
+            text-align: center;
+            line-height: 1.8;
+            padding: 30px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 25px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.2);
+            animation: textFadeIn 2s ease;
+            letter-spacing: 1px;
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes textFadeIn {
+            from { 
+                opacity: 0;
+                transform: translateY(30px) scale(0.9);
+                filter: blur(10px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+            }
+        }
+
+        .butterfly {
+            position: absolute;
+            pointer-events: none;
+            font-size: 30px;
+            color: var(--primary-color);
+            animation: butterflyFly 15s linear infinite;
+            filter: drop-shadow(0 0 5px var(--primary-color));
+            opacity: 0.8;
+        }
+
+        @keyframes butterflyFly {
+            0% { 
+                transform: translate(-100vw, random(100vh)) rotate(0deg) scale(0.8);
+                filter: hue-rotate(0deg);
+            }
+            50% { 
+                transform: translate(50vw, random(100vh)) rotate(180deg) scale(1.2);
+                filter: hue-rotate(180deg);
+            }
+            100% { 
+                transform: translate(200vw, random(100vh)) rotate(360deg) scale(0.8);
+                filter: hue-rotate(360deg);
+            }
+        }
+
+        .flower {
+            position: absolute;
+            pointer-events: none;
+            font-size: 24px;
+            color: #ff9a9e;
+            animation: flowerFall 10s linear infinite;
+        }
+
+        @keyframes flowerFall {
+            0% { 
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% { 
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .glitter {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: glitterAnimation 3s linear infinite;
+        }
+
+        @keyframes glitterAnimation {
+            0% { 
+                transform: scale(0) rotate(0deg);
+                opacity: 0;
+                background: white;
+            }
+            50% { 
+                transform: scale(1.5) rotate(180deg);
+                opacity: 1;
+                background: var(--primary-color);
+            }
+            100% { 
+                transform: scale(0) rotate(360deg);
+                opacity: 0;
+                background: white;
+            }
+        }
     </style>
 </head>
 <body>
-
     <canvas class="background-effect"></canvas>
-
-    <h1 class="floating-text"> </h1>
-
-    <button id="surprise-btn">Clique para uma surpresa</button>
-    <p id="surprise-text"> <
+    <h1 class="floating-text">Feliz 1 Mês Meu Amor ❤️</h1>
+    <div class="surprise-btn-wrapper">
+        <button id="surprise-btn">Clique para uma surpresa mágica ✨</button>
+    </div>
+    <p id="surprise-text">Você é o amor da minha vida ❤️</p>
 
     <div class="gallery">
         <div class="photo-container">
             <img src="https://i.ibb.co/qMQNFGps/IMG-20250213-WA0073.jpg" alt="Foto 1">
-            <div class="photo-text">Nosso momento especial</div>
+            <div class="photo-text">Nosso momento especial ✨</div>
         </div>
         <div class="photo-container">
             <img src="https://i.ibb.co/KZzsDGg/IMG-20250214-WA0034.jpg" alt="Foto 2">
-            <div class="photo-text">Sempre juntos</div>
+            <div class="photo-text">Sempre juntos 💑</div>
         </div>
         <div class="photo-container">
             <img src="https://i.ibb.co/mFMHyNHf/IMG-20250213-WA0074.jpg" alt="Foto 3">
-            <div class="photo-text">Eu Te amo!</div>
+            <div class="photo-text">Eu Te amo! 💖</div>
         </div>
         <div class="photo-container">
             <img src="https://i.ibb.co/xPRFWrF/IMG-20250213-WA0071.jpg" alt="Foto 4">
-            <div class="photo-text">Seu sorriso lindo</div>
+            <div class="photo-text">Seu sorriso lindo 🌟</div>
         </div>
     </div>
 
     <iframe class="music-frame" id="music-frame" src="https://vocaroo.com/embed/19iqIgBr4ZlL?autoplay=0" allow="autoplay"></iframe>
-
-    <p id="custom-text"></p> <!-- Espaço para o texto personalizado -->
+    <p id="custom-text"></p>
 
     <script>
-        // Variável para controlar o efeito das pétalas
         let particles = [];
         let animationFrameId;
 
-        // Função para iniciar o efeito das pétalas
+        function createButterfly() {
+            const butterfly = document.createElement('i');
+            butterfly.className = 'fas fa-heart butterfly';
+            butterfly.style.top = Math.random() * window.innerHeight + 'px';
+            document.body.appendChild(butterfly);
+            setTimeout(() => butterfly.remove(), 15000);
+        }
+
+        function createSparkle() {
+            const sparkle = document.createElement('i');
+            sparkle.className = 'fas fa-star sparkle';
+            sparkle.style.left = Math.random() * window.innerWidth + 'px';
+            sparkle.style.top = Math.random() * window.innerHeight + 'px';
+            sparkle.style.fontSize = Math.random() * 20 + 10 + 'px';
+            document.body.appendChild(sparkle);
+            setTimeout(() => sparkle.remove(), 2000);
+        }
+
+        function createHeart() {
+            const heart = document.createElement('i');
+            heart.className = 'fas fa-heart heart';
+            heart.style.left = Math.random() * window.innerWidth + 'px';
+            heart.style.top = Math.random() * window.innerHeight + 'px';
+            heart.style.fontSize = Math.random() * 30 + 20 + 'px';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 1500);
+        }
+
+        function createFlower() {
+            const flower = document.createElement('i');
+            flower.className = 'fas fa-flower flower';
+            flower.style.left = Math.random() * window.innerWidth + 'px';
+            document.body.appendChild(flower);
+            setTimeout(() => flower.remove(), 10000);
+        }
+
+        function createGlitter() {
+            const glitter = document.createElement('div');
+            glitter.className = 'glitter';
+            glitter.style.left = Math.random() * window.innerWidth + 'px';
+            glitter.style.top = Math.random() * window.innerHeight + 'px';
+            document.body.appendChild(glitter);
+            setTimeout(() => glitter.remove(), 3000);
+        }
+
         function initParticles() {
             const canvas = document.querySelector('.background-effect');
             const ctx = canvas.getContext('2d');
@@ -208,10 +479,17 @@
                     this.size = Math.random() * 5 + 2;
                     this.speedY = Math.random() * 3 + 1;
                     this.opacity = Math.random() * 0.5 + 0.5;
+                    this.color = `hsl(${Math.random() * 60 + 330}, 100%, 70%)`;
+                    this.angle = Math.random() * 360;
+                    this.spin = Math.random() * 3 - 1.5;
+                    this.sparkleTime = 0;
                 }
 
                 update() {
                     this.y += this.speedY;
+                    this.angle += this.spin;
+                    this.sparkleTime += 0.05;
+                    
                     if (this.y > canvas.height) {
                         this.y = 0;
                         this.x = Math.random() * canvas.width;
@@ -219,12 +497,36 @@
                 }
 
                 draw() {
+                    ctx.save();
+                    ctx.translate(this.x, this.y);
+                    ctx.rotate(this.angle * Math.PI / 180);
                     ctx.globalAlpha = this.opacity;
-                    ctx.fillStyle = '#ff6b81';
+                    ctx.fillStyle = this.color;
+                    
+                    // Draw heart shape
                     ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.moveTo(0, -this.size);
+                    ctx.bezierCurveTo(
+                        this.size, -this.size,
+                        this.size, this.size/2,
+                        0, this.size
+                    );
+                    ctx.bezierCurveTo(
+                        -this.size, this.size/2,
+                        -this.size, -this.size,
+                        0, -this.size
+                    );
                     ctx.fill();
-                    ctx.globalAlpha = 1;
+                    
+                    // Add sparkle effect
+                    const sparkle = Math.sin(this.sparkleTime) * 0.5 + 0.5;
+                    ctx.globalAlpha = sparkle * this.opacity;
+                    ctx.fillStyle = 'white';
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.size/2, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.restore();
                 }
             }
 
@@ -244,19 +546,33 @@
             animateParticles();
         }
 
-        // Botão surpresa
         document.getElementById("surprise-btn").addEventListener("click", function() {
-            document.body.style.backgroundColor = "#d8b4f8"; // muda o fundo para lilás
-            document.querySelector(".background-effect").style.display = "block"; // exibe o efeito das pétalas
-            document.querySelector(".floating-text").style.display = "block"; // exibe "Feliz 1 Mês"
-            document.getElementById("music-frame").src = "https://vocaroo.com/embed/19iqIgBr4ZlL?autoplay=1"; // toca a música
-            document.getElementById("surprise-text").style.display = "block"; // exibe a mensagem surpresa
-            document.querySelector(".gallery").style.display = "flex"; // exibe as imagens
+            document.body.style.backgroundColor = "#d8b4f8";
+            document.querySelector(".background-effect").style.display = "block";
+            
+            const floatingText = document.querySelector(".floating-text");
+            floatingText.style.display = "block";
+            setTimeout(() => floatingText.style.opacity = "1", 100);
+            
+            document.getElementById("music-frame").src = "https://vocaroo.com/embed/19iqIgBr4ZlL?autoplay=1";
+            
+            const surpriseText = document.getElementById("surprise-text");
+            surpriseText.style.display = "block";
+            setTimeout(() => surpriseText.style.opacity = "1", 500);
+            
+            document.querySelector(".gallery").style.display = "flex";
+
+            setInterval(createButterfly, 2000);
+            setInterval(createSparkle, 800);
+            setInterval(createHeart, 1500);
+            setInterval(createFlower, 3000);
+            setInterval(createGlitter, 500);
 
             let photos = document.querySelectorAll(".photo-container");
             photos.forEach((photo, index) => {
                 setTimeout(() => {
-                    photo.style.transform = "scale(1)";
+                    photo.style.transform = "scale(1) rotateY(0deg)";
+                    photo.style.pointerEvents = "auto";
                 }, index * 300);
             });
 
@@ -264,28 +580,36 @@
                 let loveText = document.getElementById("love-text");
                 loveText.style.display = "block";
                 setTimeout(() => {
-                    loveText.style.opacity = "1"; // fade-in do "Eu te amo"
+                    loveText.style.opacity = "1";
                 }, 200);
             }, 2500);
 
-            // Exibe o texto personalizado
             let customText = document.getElementById("custom-text");
             customText.style.display = "block";
             customText.textContent = `amor, hoje a gente completa um mês juntos, e eu só quero te lembrar o quanto você significa pra mim. desde o primeiro dia, antes mesmo de te beijar, antes de tocar sua pele, antes de sentir seu abraço, eu já sabia que você era a minha pessoa. me apaixonei naquele dia em que começamos a conversar, porque senti que você era tudo o que eu sempre quis. conhecer você foi a melhor coisa que já me aconteceu. você mudou minha vida de uma maneira que nem sei explicar, você trouxe luz, paz e um amor que eu nunca imaginei ser possível, minha princesa, eu te amo muito. amo seu abraço, amo seu jeito, amo tudo em você. você me cura, me faz bem, me acalma de um jeito que ninguém nunca conseguiu. quando estou com você, o tempo passa rápido demais, mas cada segundo ao seu lado vale a pena. seu abraço é a melhor coisa do universo, e ouvir você dizer que me ama, olhando nos meus olhos, é a coisa mais incrível que já senti. e quando você sorri, meu mundo para. sua felicidade é tudo o que eu mais quero, eu era burro por não te tratar assim antes, mas isso nunca mais vai mudar, tá bom? você é a pessoa mais especial do mundo pra mim. eu quero te ter na minha vida pra sempre, nessa e em todas as outras. eu quero me casar com você, quero cuidar de você, quero te fazer feliz todos os dias. cada sonho meu agora tem você, cada futuro meu só faz sentido com você ao meu lado. então, por favor, bebe água e se alimenta direitinho, porque a gente ainda tem uma vida inteira pela frente. eu vou cuidar de você, te fazer sorrir, te amar todos os dias com toda a força que eu tenho, você é minha base, minha força, e o maior presente que a vida me deu. aconteça o que acontecer, meus olhos sempre estarão ligados a você, minha mente sempre estará pensando em você, meu coração sempre baterá por você, minhas palavras de amor sempre serão sobre você. você me faz ser uma pessoa melhor, e eu te amo por isso. você é o meu tudo, independente do que aconteça, prometo nunca desistir de você, porque vou fazer de tudo pra te mostrar que não é dificil amar você, e te amar é a melhor coisa da minha vida! e por mais que a gente enfrente dificuldades, eu sei que sempre teremos um ao outro. você é meu porto seguro, meu amor eterno, eu amo tudo em você, sua personalidade, seu cabelo, seus olhinhos, amo cada detalhe e não mudaria nada em você, porque te amo por inteira, o jeito que você ri, a maneira como se importa comigo, tudo em você é perfeito. você me fascina a cada dia, me faz querer ser uma pessoa melhor e me faz feliz de um jeito que nunca imaginei ser possível. você tem algo que ninguém mais tem: o poder de me fazer sentir único, amado, completo, te admiro profundamente por tudo o que você é e pelo que faz. cada gesto seu, cada palavra que você diz, só me faz te amar ainda mais. você é incrível, e fico tão feliz por ter alguém como você ao meu lado. seu jeito de ser, sua bondade, seu coração enorme, são qualidades raras que me fazem me apaixonar cada vez mais. você é a razão de eu querer ser alguém melhor a cada dia, eu te amo não só pelos momentos bons, mas também pelas dificuldades que enfrentamos juntos. você me mostrou o verdadeiro significado do amor, e eu sou grato por isso todos os dias. você me ensina todos os dias a ser mais paciente, mais compreensivo e mais grato. não importa onde a vida nos leve, eu quero estar ao seu lado, em todos os momentos, obrigado por ser essa pessoa incrível na minha vida. eu só posso confiar em você, e eu prometo te provar todos os dias o quanto você merece ser amada. eu vou te bombardear de amor, porque você foi a melhor coisa que aconteceu comigo desde que eu nasci. você é o meu mundo, meu amor, minha vida. nunca se esqueça disso. eu prometo que estarei ao seu lado, te amando e cuidando de você todos os dias, eu te amo mais que tudo. você é a pessoa que eu escolhi, e eu não me canso de escolher você todos os dias. meu amor por você é infinito, e nada vai mudar isso. porque você é a melhor parte de mim, e eu sou a melhor versão de mim quando estou com você. eu te amo, minha princesa, mais do que palavras podem expressar. eu não quero que isso acabe nunca, eu te amo.`;
 
-            this.style.display = "none"; // esconde o botão
-
-            // Inicia o efeito das pétalas
+            this.style.display = "none";
             initParticles();
         });
 
-        // Redimensionar canvas ao ajustar a tela
         window.addEventListener('resize', () => {
             const canvas = document.querySelector('.background-effect');
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
         });
-    </script>
 
+        // Add mouse trail effect
+        document.addEventListener('mousemove', (e) => {
+            if (document.querySelector('.background-effect').style.display === 'block') {
+                const trail = document.createElement('div');
+                trail.className = 'glitter';
+                trail.style.left = e.pageX + 'px';
+                trail.style.top = e.pageY + 'px';
+                document.body.appendChild(trail);
+                setTimeout(() => trail.remove(), 2000);
+            }
+        });
+    </script>
+    <script type="text/babel" src="components/Display.js"></script>
 </body>
 </html>
